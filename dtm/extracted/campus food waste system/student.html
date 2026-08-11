@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Food Selection</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>Student Food Selection</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="student.html">Student Food Selection</a>
+    <a href="report.html">Food Report</a>
+</nav>
+
+<div class="container">
+
+<h2>Student Details</h2>
+<input id="regno" placeholder="Register Number">
+<input id="name" placeholder="Student Name">
+
+<h2>Breakfast</h2>
+<label><input type="checkbox" id="dosa"> Dosa</label><br>
+<label><input type="checkbox" id="idly"> Idly</label>
+
+<h2>Lunch</h2>
+<label><input type="checkbox" id="rice"> Rice</label><br>
+<label><input type="checkbox" id="dal"> Dal</label><br>
+<label><input type="checkbox" id="sambar"> Sambar</label><br>
+<label><input type="checkbox" id="chutney"> Chutney</label><br>
+<label><input type="checkbox" id="curd"> Curd</label>
+
+<h2>Dinner</h2>
+<label><input type="radio" name="dinner" value="Fried Rice"> Fried Rice</label><br>
+<label><input type="radio" name="dinner" value="Chapathi"> Chapathi</label>
+
+<br><br>
+<button onclick="submitFood()">Submit Selection</button>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

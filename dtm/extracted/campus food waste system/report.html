@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Food Report</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>Food Selection Report</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="student.html">Student Page</a>
+</nav>
+
+<div class="container" id="output"></div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("studentSelections")) || [];
+
+let count = {
+    dosa:0,idly:0,rice:0,dal:0,sambar:0,chutney:0,curd:0,
+    friedRice:0,chapathi:0
+};
+
+data.forEach(s=>{
+    if(s.breakfast.dosa) count.dosa++;
+    if(s.breakfast.idly) count.idly++;
+    if(s.lunch.rice) count.rice++;
+    if(s.lunch.dal) count.dal++;
+    if(s.lunch.sambar) count.sambar++;
+    if(s.lunch.chutney) count.chutney++;
+    if(s.lunch.curd) count.curd++;
+    if(s.dinner==="Fried Rice") count.friedRice++;
+    if(s.dinner==="Chapathi") count.chapathi++;
+});
+
+document.getElementById("output").innerHTML = `
+<h3>Breakfast</h3>
+Dosa: ${count.dosa}<br>
+Idly: ${count.idly}<br>
+
+<h3>Lunch</h3>
+Rice: ${count.rice}<br>
+Dal: ${count.dal}<br>
+Sambar: ${count.sambar}<br>
+Chutney: ${count.chutney}<br>
+Curd: ${count.curd}<br>
+
+<h3>Dinner</h3>
+Fried Rice: ${count.friedRice}<br>
+Chapathi: ${count.chapathi}
+`;
+</script>
+
+</body>
+</html>

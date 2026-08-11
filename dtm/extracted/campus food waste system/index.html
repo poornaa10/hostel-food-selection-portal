@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Food Portal</title>
+
+<style>
+body{
+margin:0;
+font-family:Segoe UI;
+background:linear-gradient(120deg,#00c6ff,#0072ff);
+display:flex;
+align-items:center;
+justify-content:center;
+min-height:100vh;
+}
+
+.card{
+width:460px;
+background:#fff;
+padding:25px;
+border-radius:18px;
+box-shadow:0 20px 40px rgba(0,0,0,.3);
+display:none;
+}
+.card.active{display:block;}
+
+h1,h2{text-align:center;margin:8px 0;}
+
+.header{
+background:#16a085;
+color:#fff;
+padding:12px;
+border-radius:12px;
+text-align:center;
+font-size:14px;
+margin-bottom:12px;
+font-weight:bold;
+}
+
+.progress{
+display:flex;
+justify-content:space-between;
+margin-bottom:15px;
+font-size:12px;
+}
+.progress span{
+flex:1;
+text-align:center;
+color:#aaa;
+}
+.progress span.active{
+color:#27ae60;
+font-weight:bold;
+}
+
+.time{
+background:#eef6ff;
+padding:8px;
+border-radius:8px;
+font-size:13px;
+text-align:center;
+margin-bottom:10px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+button{
+width:100%;
+padding:13px;
+border:none;
+border-radius:10px;
+background:#27ae60;
+color:#fff;
+font-size:16px;
+cursor:pointer;
+}
+
+.meal{
+background:#f7f9fa;
+padding:12px;
+border-radius:10px;
+margin:8px 0;
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.nav{display:flex;gap:10px;margin-top:15px;}
+.nav button{flex:1;}
+
+.summary{
+background:#f4f6f7;
+padding:12px;
+border-radius:10px;
+}
+
+.success{
+color:#27ae60;
+text-align:center;
+font-weight:bold;
+margin-top:10px;
+}
+
+.qrbox{text-align:center;padding:20px;}
+
+.footer{
+text-align:center;
+font-size:12px;
+color:#777;
+margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="card active" id="login">
+<h1>🍽 Student Food Portal</h1>
+
+<div class="progress">
+<span class="active">Login</span>
+<span>Breakfast</span>
+<span>Lunch</span>
+<span>Dinner</span>
+<span>Submission</span>
+</div>
+
+<input id="regno" placeholder="Register Number">
+<input id="password" placeholder="Password">
+
+<button onclick="start()">Login</button>
+<div class="footer">SRM Hostel Food System</div>
+</div>
+
+<!-- BREAKFAST -->
+<div class="card" id="breakfast">
+<div class="header" id="header1"></div>
+
+<div class="progress">
+<span class="active">Login</span>
+<span class="active">Breakfast</span>
+<span>Lunch</span>
+<span>Dinner</span>
+<span>Submission</span>
+</div>
+
+<h2>🍳 Breakfast</h2>
+<div class="time">7:30 AM – 9:30 AM</div>
+
+<div class="meal"><input type="checkbox" id="dosa"> 🥞 Dosa</div>
+<div class="meal"><input type="checkbox" id="idly"> 🍘 Idly</div>
+
+<div class="nav">
+<button onclick="toLunch()">Next</button>
+</div>
+</div>
+
+<!-- LUNCH -->
+<div class="card" id="lunch">
+<div class="header" id="header2"></div>
+
+<div class="progress">
+<span class="active">Login</span>
+<span class="active">Breakfast</span>
+<span class="active">Lunch</span>
+<span>Dinner</span>
+<span>Submission</span>
+</div>
+
+<h2>🍛 Lunch</h2>
+
+<div class="meal"><input type="checkbox" id="rice"> 🍚 Rice</div>
+<div class="meal"><input type="checkbox" id="dal"> 🥣 Dal</div>
+<div class="meal"><input type="checkbox" id="sambar"> 🍲 Sambar</div>
+<div class="meal"><input type="checkbox" id="chutney"> 🧄 Chutney</div>
+<div class="meal"><input type="checkbox" id="curd"> 🥛 Curd</div>
+
+<div class="nav">
+<button onclick="show('lunch','breakfast')">Back</button>
+<button onclick="toDinner()">Next</button>
+</div>
+</div>
+
+<!-- DINNER -->
+<div class="card" id="dinner">
+<div class="header" id="header3"></div>
+
+<div class="progress">
+<span class="active">Login</span>
+<span class="active">Breakfast</span>
+<span class="active">Lunch</span>
+<span class="active">Dinner</span>
+<span>Submission</span>
+</div>
+
+<h2>🍽 Dinner</h2>
+
+<div class="meal"><input type="radio" name="dinner" value="Fried Rice"> 🍜 Fried Rice</div>
+<div class="meal"><input type="radio" name="dinner" value="Chapathi"> 🫓 Chapathi</div>
+
+<div class="nav">
+<button onclick="show('dinner','lunch')">Back</button>
+<button onclick="review()">Review</button>
+</div>
+</div>
+
+<!-- REVIEW -->
+<div class="card" id="review">
+<div class="header" id="header4"></div>
+
+<div class="progress">
+<span class="active">Login</span>
+<span class="active">Breakfast</span>
+<span class="active">Lunch</span>
+<span class="active">Dinner</span>
+<span class="active">Submission</span>
+</div>
+
+<h2>📋 Review</h2>
+<div class="summary" id="summary"></div>
+
+<div class="nav">
+<button onclick="show('review','dinner')">Edit</button>
+<button onclick="generateQR()">Submit</button>
+</div>
+</div>
+
+<!-- QR -->
+<div class="card" id="qr">
+<h2>🎫 Meal QR</h2>
+<div class="qrbox">
+<img id="qrimg" width="200">
+<p id="qrtext"></p>
+<p class="success">✅ Successfully Submitted</p>
+</div>
+</div>
+
+<script>
+function tomorrow(){
+let d=new Date();
+d.setDate(d.getDate()+1);
+return d.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
+}
+
+function setHeaders(){
+let t=`Tomorrow Menu - ${tomorrow()} | Submit before 3:00 PM`;
+header1.innerHTML=t;
+header2.innerHTML=t;
+header3.innerHTML=t;
+header4.innerHTML=t;
+}
+
+function show(a,b){
+document.getElementById(a).classList.remove("active");
+document.getElementById(b).classList.add("active");
+}
+
+function start(){
+if(!regno.value){
+alert("Enter Register Number");
+return;
+}
+setHeaders();
+show("login","breakfast");
+}
+
+function toLunch(){
+if(!dosa.checked && !idly.checked){
+alert("Select breakfast");
+return;
+}
+show("breakfast","lunch");
+}
+
+function toDinner(){
+if(!rice.checked && !dal.checked && !sambar.checked && !chutney.checked && !curd.checked){
+alert("Select lunch");
+return;
+}
+show("lunch","dinner");
+}
+
+function review(){
+let d=document.querySelector('input[name="dinner"]:checked');
+if(!d){alert("Select dinner");return;}
+
+summary.innerHTML=`
+Register: ${regno.value}<hr>
+Breakfast: ${(dosa.checked?"Dosa ":"")+(idly.checked?"Idly":"")}<br>
+Lunch: ${(rice.checked?"Rice ":"")+(dal.checked?"Dal ":"")+(sambar.checked?"Sambar ":"")+(chutney.checked?"Chutney ":"")+(curd.checked?"Curd":"")}<br>
+Dinner: ${d.value}`;
+show("dinner","review");
+}
+
+function generateQR(){
+
+if(localStorage.getItem("submitted_"+regno.value)){
+alert("Already submitted!");
+return;
+}
+
+let id=regno.value;
+qrtext.innerText="Student ID: "+id;
+
+let qrURL="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+id;
+qrimg.src=qrURL;
+
+let data=JSON.parse(localStorage.getItem("foodData"))||[];
+data.push({
+dosa:dosa.checked,idly:idly.checked,rice:rice.checked,
+dal:dal.checked,sambar:sambar.checked,
+chutney:chutney.checked,curd:curd.checked,
+dinner:document.querySelector('input[name="dinner"]:checked').value
+});
+
+localStorage.setItem("foodData",JSON.stringify(data));
+localStorage.setItem("submitted_"+regno.value,true);
+
+show("review","qr");
+}
+</script>
+
+</body>
+</html>

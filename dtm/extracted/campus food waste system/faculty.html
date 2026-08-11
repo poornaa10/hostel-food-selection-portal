@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Faculty Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:Segoe UI;
+background:#eef2f3;
+}
+
+header{
+background:#2c3e50;
+color:#fff;
+padding:18px;
+text-align:center;
+font-size:24px;
+}
+
+.container{
+width:90%;
+margin:30px auto;
+}
+
+.card{
+background:#fff;
+padding:20px;
+border-radius:12px;
+box-shadow:0 10px 20px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+}
+
+.box{
+background:#f4f6f7;
+padding:15px;
+border-radius:10px;
+text-align:center;
+}
+
+.box span{
+font-size:28px;
+font-weight:bold;
+color:#27ae60;
+display:block;
+}
+
+button{
+padding:12px;
+border:none;
+border-radius:8px;
+margin-right:10px;
+cursor:pointer;
+}
+
+.refresh{background:#27ae60;color:white;}
+.clear{background:#e74c3c;color:white;}
+.download{background:#2980b9;color:white;}
+
+canvas{
+max-width:400px;
+margin:auto;
+display:block;
+}
+
+.alert{
+background:#ffeaa7;
+padding:10px;
+border-radius:8px;
+margin-bottom:10px;
+text-align:center;
+font-weight:bold;
+}
+
+.summary{
+background:#ecf0f1;
+padding:15px;
+border-radius:10px;
+font-size:15px;
+line-height:1.6;
+}
+
+.footer{
+text-align:center;
+font-size:12px;
+margin-top:20px;
+color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<header>Faculty Dashboard – Food Planning</header>
+
+<div class="container">
+
+<div id="alertBox"></div>
+
+<div class="card">
+<h2>Total Students</h2>
+<div class="box">Count<span id="total">0</span></div>
+</div>
+
+<!-- PREPARATION SUMMARY -->
+<div class="card">
+<h2>🍽 Preparation Summary</h2>
+<div class="summary" id="summary"></div>
+</div>
+
+<!-- BREAKFAST -->
+<div class="card">
+<h2>🍳 Breakfast Analysis</h2>
+<div class="grid">
+<div class="box">Dosa<span id="dosa">0</span></div>
+<div class="box">Idly<span id="idly">0</span></div>
+</div>
+<canvas id="breakfastChart"></canvas>
+</div>
+
+<!-- LUNCH -->
+<div class="card">
+<h2>🍛 Lunch Analysis</h2>
+<div class="grid">
+<div class="box">Rice<span id="rice">0</span></div>
+<div class="box">Dal<span id="dal">0</span></div>
+<div class="box">Sambar<span id="sambar">0</span></div>
+<div class="box">Chutney<span id="chutney">0</span></div>
+<div class="box">Curd<span id="curd">0</span></div>
+</div>
+<canvas id="lunchChart"></canvas>
+</div>
+
+<!-- DINNER -->
+<div class="card">
+<h2>🍽 Dinner Analysis</h2>
+<div class="grid">
+<div class="box">Fried Rice<span id="fried">0</span></div>
+<div class="box">Chapathi<span id="chapathi">0</span></div>
+</div>
+<canvas id="dinnerChart"></canvas>
+</div>
+
+<div class="card">
+<button class="refresh" onclick="loadData()">Refresh</button>
+<button class="download" onclick="downloadCSV()">Download</button>
+<button class="clear" onclick="clearData()">Clear</button>
+</div>
+
+<div class="footer">SRM Hostel · Smart Food System</div>
+
+</div>
+
+<script>
+let bChart,lChart,dChart;
+
+function loadData(){
+let data = JSON.parse(localStorage.getItem("foodData")) || [];
+
+let c={dosa:0,idly:0,rice:0,dal:0,sambar:0,chutney:0,curd:0,fried:0,chapathi:0};
+
+data.forEach(s=>{
+if(s.dosa) c.dosa++;
+if(s.idly) c.idly++;
+if(s.rice) c.rice++;
+if(s.dal) c.dal++;
+if(s.sambar) c.sambar++;
+if(s.chutney) c.chutney++;
+if(s.curd) c.curd++;
+if(s.dinner==="Fried Rice") c.fried++;
+if(s.dinner==="Chapathi") c.chapathi++;
+});
+
+total.innerText=data.length;
+
+// ALERT SYSTEM
+if(data.length==0){
+alertBox.innerHTML="<div class='alert'>⚠ No student responses yet</div>";
+}else if(data.length<5){
+alertBox.innerHTML="<div class='alert'>⚠ Low response – estimate carefully</div>";
+}else{
+alertBox.innerHTML="";
+}
+
+// COUNTS
+dosa.innerText=c.dosa;
+idly.innerText=c.idly;
+rice.innerText=c.rice;
+dal.innerText=c.dal;
+sambar.innerText=c.sambar;
+chutney.innerText=c.chutney;
+curd.innerText=c.curd;
+fried.innerText=c.fried;
+chapathi.innerText=c.chapathi;
+
+// SUMMARY
+summary.innerHTML=`
+Prepare:
+<br>✔ ${c.dosa} Dosa
+<br>✔ ${c.idly} Idly
+<br>✔ ${c.rice} Rice
+<br>✔ ${c.dal} Dal
+<br>✔ ${c.sambar} Sambar
+<br>✔ ${c.chutney} Chutney
+<br>✔ ${c.curd} Curd
+<br>✔ ${c.fried} Fried Rice
+<br>✔ ${c.chapathi} Chapathi
+`;
+
+drawCharts(c);
+}
+
+function drawCharts(c){
+
+if(bChart) bChart.destroy();
+if(lChart) lChart.destroy();
+if(dChart) dChart.destroy();
+
+bChart=new Chart(breakfastChart,{
+type:"pie",
+data:{
+labels:["Dosa","Idly"],
+datasets:[{data:[c.dosa,c.idly],backgroundColor:["#f39c12","#3498db"]}]
+}
+});
+
+lChart=new Chart(lunchChart,{
+type:"pie",
+data:{
+labels:["Rice","Dal","Sambar","Chutney","Curd"],
+datasets:[{data:[c.rice,c.dal,c.sambar,c.chutney,c.curd],
+backgroundColor:["#1abc9c","#9b59b6","#e67e22","#2ecc71","#34495e"]}]
+}
+});
+
+dChart=new Chart(dinnerChart,{
+type:"pie",
+data:{
+labels:["Fried Rice","Chapathi"],
+datasets:[{data:[c.fried,c.chapathi],
+backgroundColor:["#e74c3c","#2980b9"]}]
+}
+});
+}
+
+function downloadCSV(){
+let data = JSON.parse(localStorage.getItem("foodData")) || [];
+let csv="Dosa,Idly,Rice,Dal,Sambar,Chutney,Curd,Dinner\n";
+
+data.forEach(s=>{
+csv+=`${s.dosa},${s.idly},${s.rice},${s.dal},${s.sambar},${s.chutney},${s.curd},${s.dinner}\n`;
+});
+
+let blob=new Blob([csv],{type:"text/csv"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="report.csv";
+a.click();
+}
+
+function clearData(){
+if(confirm("Clear data?")){
+localStorage.removeItem("foodData");
+loadData();
+}
+}
+
+setInterval(loadData,2000);
+loadData();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FWMS – Student Portal | SRM Hostel</title>
+  <meta name="description"
+    content="SRM Hostel Food Waste Management System – Student Portal for smart meal planning, cancellation, and feedback.">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    /* ================================================================
+       ROOT VARIABLES
+       ================================================================ */
+    :root {
+      --purple: #7C3AED;
+      --purple-dark: #5B21B6;
+      --purple-light: #EDE9FE;
+      --pink: #EC4899;
+      --green: #059669;
+      --green-bg: #ECFDF5;
+      --red: #DC2626;
+      --red-bg: #FEF2F2;
+      --amber: #D97706;
+      --amber-bg: #FFFBEB;
+      --blue: #2563EB;
+      --blue-bg: #EFF6FF;
+      --dark: #1E1B4B;
+      --surface: #FFFFFF;
+      --bg: #F8F7FF;
+      --border: #E5E7EB;
+      --t1: #111827;
+      /* primary text */
+      --t2: #374151;
+      /* secondary text */
+      --t3: #6B7280;
+      /* muted text */
+      --t4: #9CA3AF;
+      /* placeholder */
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --radius-xs: 6px;
+      --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, .07), 0 2px 4px -2px rgba(0, 0, 0, .05);
+      --shadow-float: 0 20px 60px rgba(124, 58, 237, .35);
+      --trans: all .25s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    /* ================================================================
+       RESET & BASE
+       ================================================================ */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1a1040 0%, #5B21B6 45%, #7C3AED 70%, #EC4899 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 40px;
+    }
+
+    /* Ambient orbs */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 800px 600px at 80% 20%, rgba(236, 72, 153, .18), transparent),
+        radial-gradient(ellipse 600px 700px at 10% 80%, rgba(124, 58, 237, .2), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Food particle animation */
+    .bg-particle {
+      position: fixed;
+      font-size: 26px;
+      opacity: .10;
+      animation: rise linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(110vh) rotate(0deg);
+        opacity: 0;
+      }
+
+      8% {
+        opacity: .10;
+      }
+
+      92% {
+        opacity: .10;
+      }
+
+      100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* ================================================================
+       APP WRAPPER
+       ================================================================ */
+    .app-wrap {
+      width: 100%;
+      max-width: 520px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Screen transitions */
+    .screen {
+      display: none;
+      animation: enter .35s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes enter {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Base card */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-float);
+      overflow: hidden;
+    }
+
+    /* ================================================================
+       LOGIN & REGISTER — HEADER GRADIENT
+       ================================================================ */
+    .auth-head {
+      background: linear-gradient(135deg, var(--dark) 0%, var(--purple) 60%, var(--pink) 100%);
+      padding: 40px 28px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-head::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, .06);
+      border-radius: 50%;
+      top: -60px;
+      right: -60px;
+    }
+
+    .auth-head::after {
+      content: '';
+      position: absolute;
+      width: 130px;
+      height: 130px;
+      background: rgba(255, 255, 255, .05);
+      border-radius: 50%;
+      bottom: -40px;
+      left: -30px;
+    }
+
+    .logo-icon {
+      width: 72px;
+      height: 72px;
+      background: rgba(255, 255, 255, .15);
+      border: 2px solid rgba(255, 255, 255, .3);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 14px;
+      animation: bob 3s ease-in-out infinite;
+    }
+
+    @keyframes bob {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-6px)
+      }
+    }
+
+    .auth-title {
+      color: #fff;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.3px;
+    }
+
+    .auth-sub {
+      color: rgba(255, 255, 255, .72);
+      font-size: 12px;
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    /* ================================================================
+       FORM COMPONENTS
+       ================================================================ */
+    .form-body {
+      padding: 28px;
+    }
+
+    .form-headline {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--t1);
+    }
+
+    .form-tagline {
+      font-size: 13px;
+      color: var(--t3);
+      margin-top: 3px;
+      margin-bottom: 24px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--t2);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      margin-bottom: 7px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--t4);
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    .input-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--t4);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .fld {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      background: var(--bg);
+      color: var(--t1);
+      outline: none;
+      transition: var(--trans);
+    }
+
+    .fld.no-icon {
+      padding-left: 14px;
+    }
+
+    .fld:focus {
+      border-color: var(--purple);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, .1);
+    }
+
+    .fld::placeholder {
+      color: var(--t4);
+    }
+
+    select.fld {
+      cursor: pointer;
+      appearance: none;
+    }
+
+    /* ----------------------------------------------------------------
+       BUTTONS
+       ---------------------------------------------------------------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 20px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--trans);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:active {
+      transform: scale(.98);
+    }
+
+    .btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(124, 58, 237, .38);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 10px 28px rgba(124, 58, 237, .48);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--purple);
+      border: 1.5px solid var(--purple);
+    }
+
+    .btn-outline:hover {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10B981, var(--green));
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, .35);
+    }
+
+    .btn-success:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #EF4444, var(--red));
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(220, 38, 38, .35);
+    }
+
+    .btn-sm {
+      width: auto;
+      padding: 8px 16px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    .btn-xs {
+      width: auto;
+      padding: 5px 12px;
+      font-size: 11px;
+      border-radius: 6px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-group .btn {
+      flex: 1;
+    }
+
+    /* ----------------------------------------------------------------
+       UTILITY: DIVIDER, LINK ROW, BANNERS, ERROR
+       ---------------------------------------------------------------- */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--t4);
+      font-size: 12px;
+      margin: 18px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .link-row {
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .link-row a,
+    .txt-link {
+      color: var(--purple);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .txt-link:hover,
+    .link-row a:hover {
+      text-decoration: underline;
+    }
+
+    .banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .banner i {
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .ban-info {
+      background: var(--blue-bg);
+      color: var(--blue);
+      border-left: 3px solid var(--blue);
+    }
+
+    .ban-success {
+      background: var(--green-bg);
+      color: var(--green);
+      border-left: 3px solid #10B981;
+    }
+
+    .ban-warn {
+      background: var(--amber-bg);
+      color: var(--amber);
+      border-left: 3px solid var(--amber);
+    }
+
+    .ban-err {
+      background: var(--red-bg);
+      color: var(--red);
+      border-left: 3px solid var(--red);
+    }
+
+    .err-box {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid rgba(220, 38, 38, .2);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .err-box.show {
+      display: block;
+      animation: enter .25s ease;
+    }
+
+    /* ================================================================
+       TOP BAR (inside closed screens)
+       ================================================================ */
+    .top-bar {
+      background: linear-gradient(135deg, var(--dark), var(--purple));
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+    }
+
+    .tb-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .back-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: rgba(255, 255, 255, .15);
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--trans);
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    .tb-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .tb-sub {
+      font-size: 11px;
+      opacity: .75;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, .15);
+      border: none;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--trans);
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    /* ================================================================
+       SCHEDULE CARD (below login)
+       ================================================================ */
+    .sched-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-float);
+      margin-top: 14px;
+      overflow: hidden;
+    }
+
+    .sched-head {
+      background: linear-gradient(135deg, var(--dark), var(--purple-dark));
+      color: #fff;
+      padding: 13px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sched-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--bg);
+      font-size: 12px;
+    }
+
+    .sched-row:last-child {
+      border-bottom: none;
+    }
+
+    .sched-meal {
+      font-weight: 600;
+      color: var(--t2);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .sched-time {
+      color: var(--t3);
+    }
+
+    .sched-dl {
+      color: var(--red);
+      font-weight: 700;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    /* ================================================================
+       PROGRESS WIZARD STEPS
+       ================================================================ */
+    .progress-bar {
+      display: flex;
+      padding: 14px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 55%;
+      right: -45%;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+
+    .step.done::after {
+      background: var(--green);
+    }
+
+    .step.active::after {
+      background: linear-gradient(90deg, var(--purple), var(--border));
+    }
+
+    .step-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 1;
+      background: var(--border);
+      color: var(--t3);
+      transition: var(--trans);
+    }
+
+    .step.active .step-dot {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, .15);
+    }
+
+    .step.done .step-dot {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .step-lbl {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--t3);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    .step.active .step-lbl {
+      color: var(--purple);
+    }
+
+    .step.done .step-lbl {
+      color: var(--green);
+    }
+
+    /* ================================================================
+       DASHBOARD
+       ================================================================ */
+    .page-body {
+      padding: 22px;
+    }
+
+    /* Welcome banner */
+    .welcome-banner {
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      border-radius: var(--radius-md);
+      padding: 20px 22px;
+      color: #fff;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-banner::after {
+      content: '🍽️';
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 50px;
+      opacity: .18;
+    }
+
+    .wb-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .wb-meta {
+      font-size: 11px;
+      opacity: .8;
+      margin-top: 2px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .wb-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      background: rgba(255, 255, 255, .18);
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+
+    /* Section header */
+    .sec-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .sec-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--t3);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+    }
+
+    .pill-purple {
+      background: var(--purple-light);
+      color: var(--purple-dark);
+    }
+
+    .pill-green {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .pill-red {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .pill-amber {
+      background: var(--amber-bg);
+      color: var(--amber);
+    }
+
+    /* ----------------------------------------------------------------
+       TODAY MEAL CARDS
+       ---------------------------------------------------------------- */
+    .meal-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: var(--shadow-card);
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: var(--trans);
+    }
+
+    .meal-card:hover {
+      border-color: rgba(124, 58, 237, .3);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, .1);
+    }
+
+    .mc-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 16px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mc-left {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .mc-icon {
+      font-size: 28px;
+    }
+
+    .mc-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--t1);
+    }
+
+    .mc-time {
+      font-size: 11px;
+      color: var(--t3);
+      margin-top: 1px;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 11px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .chip-active {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .chip-cancel {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .chip-none {
+      background: var(--border);
+      color: var(--t3);
+    }
+
+    .mc-body {
+      padding: 13px 16px;
+    }
+
+    .items-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .item-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--purple-light);
+      color: var(--purple-dark);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .item-tag .qty-badge {
+      background: var(--purple-dark);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+      margin-left: 2px;
+    }
+
+    .dl-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .dl-safe {
+      color: var(--green);
+    }
+
+    .dl-past {
+      color: var(--red);
+    }
+
+    .mc-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* ----------------------------------------------------------------
+       ACTION CARD (Tomorrow's selection)
+       ---------------------------------------------------------------- */
+    .action-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      padding: 16px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 16px;
+    }
+
+    /* ================================================================
+       MEAL SELECTION WIZARD
+       ================================================================ */
+    .step-body {
+      padding: 22px;
+    }
+
+    .meal-note {
+      background: var(--purple-light);
+      border-left: 3px solid var(--purple);
+      padding: 11px 14px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 12px;
+      color: var(--purple-dark);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+
+    /* Option rows */
+    .opt-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Regular checkbox option */
+    .meal-opt {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 15px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--trans);
+      background: var(--surface);
+    }
+
+    .meal-opt:hover {
+      border-color: rgba(124, 58, 237, .4);
+      background: var(--purple-light);
+    }
+
+    .meal-opt.sel {
+      border-color: var(--purple);
+      background: var(--purple-light);
+    }
+
+    .meal-opt input[type="checkbox"],
+    .meal-opt input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--purple);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .opt-emoji {
+      font-size: 22px;
+    }
+
+    .opt-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--t1);
+      flex: 1;
+    }
+
+    /* Quantity stepper option */
+    .qty-opt {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 15px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: var(--trans);
+      background: var(--surface);
+    }
+
+    .qty-opt.sel {
+      border-color: var(--purple);
+      background: var(--purple-light);
+    }
+
+    .qty-info {
+      flex: 1;
+    }
+
+    .qty-item-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--t1);
+    }
+
+    .qty-unit {
+      font-size: 11px;
+      color: var(--t3);
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      overflow: hidden;
+    }
+
+    .st-btn {
+      width: 34px;
+      height: 34px;
+      border: none;
+      background: var(--bg);
+      color: var(--t2);
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--trans);
+      flex-shrink: 0;
+    }
+
+    .st-btn:hover:not(:disabled) {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    .st-btn:disabled {
+      color: var(--t4);
+      cursor: default;
+    }
+
+    .st-val {
+      min-width: 36px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--t1);
+      border-left: 1.5px solid var(--border);
+      border-right: 1.5px solid var(--border);
+      padding: 0 4px;
+      line-height: 34px;
+    }
+
+    /* ================================================================
+       REVIEW SCREEN
+       ================================================================ */
+    .review-box {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .review-head {
+      background: var(--bg);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--t2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .review-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--bg);
+      font-size: 13px;
+      gap: 12px;
+    }
+
+    .review-row:last-child {
+      border-bottom: none;
+    }
+
+    .rl {
+      color: var(--t3);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .rv {
+      color: var(--t1);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    /* ================================================================
+       QR SCREEN
+       ================================================================ */
+    .qr-wrap {
+      text-align: center;
+      padding: 32px 24px;
+    }
+
+    .qr-badge {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10B981, var(--green));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 14px;
+      animation: pop .5s cubic-bezier(.175, .885, .32, 1.275);
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(0)
+      }
+
+      to {
+        transform: scale(1)
+      }
+    }
+
+    .qr-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--t1);
+    }
+
+    .qr-sub {
+      color: var(--t3);
+      font-size: 13px;
+      margin: 4px 0 22px;
+    }
+
+    .qr-frame {
+      display: inline-block;
+      border: 3px solid var(--purple);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+
+    .id-card {
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 12px 20px;
+      margin-bottom: 20px;
+    }
+
+    .id-label {
+      font-size: 10px;
+      color: var(--t3);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .id-val {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--purple);
+    }
+
+    /* ================================================================
+       FEEDBACK SCREEN
+       ================================================================ */
+    .rating-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .rating-btn {
+      flex: 1;
+      padding: 12px 4px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      text-align: center;
+      cursor: pointer;
+      transition: var(--trans);
+    }
+
+    .rating-btn:hover,
+    .rating-btn.sel {
+      border-color: var(--purple);
+      background: var(--purple-light);
+      transform: translateY(-2px);
+    }
+
+    .rating-btn .em {
+      font-size: 24px;
+      display: block;
+    }
+
+    .rating-btn .lbl {
+      font-size: 9px;
+      color: var(--t3);
+      margin-top: 3px;
+    }
+
+    .fb-area {
+      width: 100%;
+      min-height: 100px;
+      padding: 13px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      resize: none;
+      outline: none;
+      transition: var(--trans);
+      color: var(--t1);
+    }
+
+    .fb-area:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, .1);
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 11px;
+      color: var(--t4);
+      margin-top: 4px;
+    }
+
+    /* ================================================================
+       TOAST & SPINNER
+       ================================================================ */
+    #toast {
+      position: fixed;
+      bottom: 26px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      color: #fff;
+      padding: 11px 24px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--t1);
+      transition: transform .4s cubic-bezier(.175, .885, .32, 1.275);
+      z-index: 9999;
+      white-space: nowrap;
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #toast.ts {
+      background: linear-gradient(135deg, #10B981, var(--green));
+    }
+
+    #toast.te {
+      background: linear-gradient(135deg, #EF4444, var(--red));
+    }
+
+    #toast.tw {
+      background: linear-gradient(135deg, #F59E0B, var(--amber));
+    }
+
+    .spin {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      border: 3px solid rgba(255, 255, 255, .3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spinning .7s linear infinite;
+    }
+
+    @keyframes spinning {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ================================================================
+       REGISTRATION — extra field styles
+       ================================================================ */
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap::after {
+      content: '\f078';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--t4);
+      font-size: 11px;
+      pointer-events: none;
+    }
+
+    /* ================================================================
+       FOOTER
+       ================================================================ */
+    .app-footer {
+      text-align: center;
+      color: rgba(255, 255, 255, .4);
+      font-size: 11px;
+      margin-top: 16px;
+    }
+
+    /* ================================================================
+       RESPONSIVE
+       ================================================================ */
+    @media(max-width: 520px) {
+      body {
+        padding: 12px 10px 32px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .rating-row {
+        gap: 5px;
+      }
+
+      .rating-btn .lbl {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Floating food particles -->
+  <span class="bg-particle" style="left:7%;  animation-duration:15s; animation-delay:0s">🍛</span>
+  <span class="bg-particle" style="left:23%; animation-duration:11s; animation-delay:3s">🍳</span>
+  <span class="bg-particle" style="left:47%; animation-duration:17s; animation-delay:1s">🥗</span>
+  <span class="bg-particle" style="left:70%; animation-duration:13s; animation-delay:5s">🍽️</span>
+  <span class="bg-particle" style="left:88%; animation-duration:10s; animation-delay:2s">🌮</span>
+
+  <div id="live-clock"
+    style="position:fixed; top:12px; right:16px; background:rgba(0,0,0,0.4); color:#fff; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:600; z-index:9999; border:1px solid rgba(255,255,255,0.1); pointer-events:none;">
+    <i class="fa fa-clock"></i> <span id="time-display">--:--:--</span>
+  </div>
+  <script>
+    setInterval(() => {
+      const el = document.getElementById('time-display');
+      if (el) el.textContent = new Date().toLocaleTimeString('en-IN');
+    }, 1000);
+  </script>
+
+  <div id="toast"></div>
+
+  <div class="app-wrap">
+
+    <!-- ==============================================================
+       SCREEN: LOGIN
+       ============================================================== -->
+    <div class="screen active" id="sc-login">
+      <div class="card">
+        <div class="auth-head">
+          <div class="logo-icon">🍽️</div>
+          <div class="auth-title">Food Waste Management</div>
+          <div class="auth-sub">SRM Hostel Smart Food System</div>
+        </div>
+
+        <div class="form-body">
+          <h1 class="form-headline">Welcome Back! 👋</h1>
+          <p class="form-tagline">Sign in with your register number to continue</p>
+
+          <div id="login-err" class="err-box"></div>
+
+          <div class="form-group">
+            <label class="label" for="inp-reg">Register Number</label>
+            <div class="input-wrap">
+              <i class="fa fa-id-card input-icon"></i>
+              <input class="fld" type="text" id="inp-reg" placeholder="e.g. RA2411026020306"
+                onkeyup="if(event.key==='Enter') document.getElementById('inp-pwd').focus()">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="inp-pwd">Password</label>
+            <div class="input-wrap">
+              <i class="fa fa-lock input-icon"></i>
+              <input class="fld" type="password" id="inp-pwd" placeholder="Enter your password"
+                onkeyup="if(event.key==='Enter') doLogin()">
+              <i class="fa fa-eye input-toggle" id="pwd-toggle" onclick="togglePwd('inp-pwd','pwd-toggle')"></i>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="login-btn" onclick="doLogin()">
+            <i class="fa fa-sign-in-alt"></i> Login to Portal
+          </button>
+
+          <div class="divider">or</div>
+
+          <div style="display:flex; gap:10px; flex-direction:column;">
+            <div class="link-row">
+              <span onclick="show('sc-register')" class="txt-link">
+                <i class="fa fa-user-plus"></i> New student? Register here →
+              </span>
+            </div>
+            <div class="link-row">
+              <a href="staff.html"><i class="fa fa-user-tie"></i> staff Portal Login →</a>
+            </div>
+          </div>
+
+          <div class="banner ban-info" style="margin-top:16px;">
+            <i class="fa fa-info-circle"></i>
+            <div><strong>Demo credentials:</strong> Register No: <code>RA2411026020306</code> | Password:
+              <code>1234</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mess schedule card -->
+      <div class="sched-card">
+        <div class="sched-head"><i class="fa fa-calendar-alt"></i> Today's Mess Schedule &amp; Deadlines</div>
+        <div class="sched-row">
+          <span class="sched-meal">🍳 Breakfast</span>
+          <span class="sched-time">7:30 AM – 8:30 AM</span>
+          <span class="sched-dl">Cancel by 7:00 AM</span>
+        </div>
+        <div class="sched-row">
+          <span class="sched-meal">🍛 Lunch</span>
+          <span class="sched-time">11:30 AM – 2:00 PM</span>
+          <span class="sched-dl">Cancel by 11:00 AM</span>
+        </div>
+        <div class="sched-row">
+          <span class="sched-meal">🍽️ Dinner</span>
+          <span class="sched-time">7:00 PM – 9:30 PM</span>
+          <span class="sched-dl">Cancel by 6:30 PM</span>
+        </div>
+      </div>
+    </div><!-- /sc-login -->
+
+    <!-- ==============================================================
+       SCREEN: REGISTRATION
+       ============================================================== -->
+    <div class="screen" id="sc-register">
+      <div class="card">
+        <div class="auth-head">
+          <div class="logo-icon">🎓</div>
+          <div class="auth-title">Create Account</div>
+          <div class="auth-sub">Register as a new hostel student</div>
+        </div>
+
+        <div class="form-body">
+          <h2 class="form-headline">Student Registration</h2>
+          <p class="form-tagline">Fill in your details to get started</p>
+
+          <div id="reg-err" class="err-box"></div>
+          <div id="reg-success" class="banner ban-success" style="display:none;">
+            <i class="fa fa-check-circle"></i>
+            <span>Registration successful! You can now log in.</span>
+          </div>
+
+          <!-- Full Name + Registration Number -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="label" for="r-name">Full Name *</label>
+              <div class="input-wrap">
+                <i class="fa fa-user input-icon"></i>
+                <input class="fld" type="text" id="r-name" placeholder="Your full name">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="label" for="r-regno">Register No. *</label>
+              <div class="input-wrap">
+                <i class="fa fa-id-badge input-icon"></i>
+                <input class="fld" type="text" id="r-regno" placeholder="RA24110260XXXXX">
+              </div>
+            </div>
+          </div>
+
+          <!-- Class + Branch -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="label" for="r-class">Year / Class *</label>
+              <div class="select-wrap">
+                <select class="fld no-icon" id="r-class">
+                  <option value="">Select Year</option>
+                  <option>1st Year</option>
+                  <option>2nd Year</option>
+                  <option>3rd Year</option>
+                  <option>4th Year</option>
+                  <option>M.Tech 1st Year</option>
+                  <option>M.Tech 2nd Year</option>
+                  <option>MBA</option>
+                  <option>MCA</option>
+                  <option>PhD</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="label" for="r-branch">Branch / Dept. *</label>
+              <div class="select-wrap">
+                <select class="fld no-icon" id="r-branch">
+                  <option value="">Select Branch</option>
+                  <option>CSE</option>
+                  <option>IT</option>
+                  <option>AIML</option>
+                  <option>Data Science</option>
+                  <option>ECE</option>
+                  <option>EEE</option>
+                  <option>MECH</option>
+                  <option>CIVIL</option>
+                  <option>CHEM</option>
+                  <option>BioMed</option>
+                  <option>Aerospace</option>
+                  <option>MBA</option>
+                  <option>MCA</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Room Number -->
+          <div class="form-group">
+            <label class="label" for="r-room">Room Number (optional)</label>
+            <div class="input-wrap">
+              <i class="fa fa-door-open input-icon"></i>
+              <input class="fld" type="text" id="r-room" placeholder="e.g. A-204">
+            </div>
+          </div>
+
+          <!-- Password + Confirm -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="label" for="r-pwd">Password *</label>
+              <div class="input-wrap">
+                <i class="fa fa-lock input-icon"></i>
+                <input class="fld" type="password" id="r-pwd" placeholder="Min. 4 characters">
+                <i class="fa fa-eye input-toggle" id="rpwd-toggle" onclick="togglePwd('r-pwd','rpwd-toggle')"></i>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="label" for="r-cpwd">Confirm Password *</label>
+              <div class="input-wrap">
+                <i class="fa fa-lock input-icon"></i>
+                <input class="fld" type="password" id="r-cpwd" placeholder="Re-enter password">
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="reg-btn" onclick="doRegister()">
+            <i class="fa fa-user-plus"></i> Create Account
+          </button>
+
+          <div class="link-row" style="margin-top:14px;">
+            <span onclick="show('sc-login')" class="txt-link">
+              <i class="fa fa-arrow-left"></i> Already registered? Login
+            </span>
+          </div>
+        </div>
+      </div>
+    </div><!-- /sc-register -->
+
+    <!-- ==============================================================
+       SCREEN: DASHBOARD
+       ============================================================== -->
+    <div class="screen" id="sc-dashboard">
+      <div class="card">
+        <div class="top-bar">
+          <div class="tb-left">
+            <div>
+              <div class="tb-title">My Dashboard</div>
+              <div class="tb-sub" id="db-date"></div>
+            </div>
+          </div>
+          <button class="logout-btn" onclick="doLogout()"><i class="fa fa-sign-out-alt"></i> Logout</button>
+        </div>
+
+        <div class="page-body">
+          <!-- Welcome banner -->
+          <div class="welcome-banner">
+            <div class="wb-name">Hello, <span id="db-name">Student</span>! 🎉</div>
+            <div class="wb-meta">
+              <span><i class="fa fa-id-badge"></i> <span id="db-regno"></span></span>
+              <span><i class="fa fa-graduation-cap"></i> <span id="db-class"></span></span>
+              <span><i class="fa fa-code-branch"></i> <span id="db-branch"></span></span>
+            </div>
+            <div class="wb-date"><i class="fa fa-calendar"></i> <span id="db-today"></span></div>
+          </div>
+
+          <!-- TODAY'S MEALS — CANCELLATION -->
+          <div class="sec-hd">
+            <div class="sec-title"><i class="fa fa-ban"></i> Today's Meals <span class="pill pill-red">Cancel if
+                needed</span></div>
+          </div>
+          <div id="today-meals"></div>
+
+          <!-- TOMORROW'S SELECTION -->
+          <div class="sec-hd" style="margin-top:22px;">
+            <div class="sec-title"><i class="fa fa-calendar-plus"></i> Tomorrow's Selection</div>
+          </div>
+          <div id="tmr-status"></div>
+          <button class="btn btn-primary" id="sel-btn" onclick="startMealWizard()">
+            <i class="fa fa-utensils"></i> Select Tomorrow's Meals
+          </button>
+        </div>
+      </div>
+    </div><!-- /sc-dashboard -->
+
+    <!-- ==============================================================
+       SCREEN: MEAL SELECTION WIZARD
+       ============================================================== -->
+    <div class="screen" id="sc-select">
+      <div class="card">
+        <div class="top-bar">
+          <div class="tb-left">
+            <button class="back-btn" onclick="openDash()"><i class="fa fa-chevron-left"></i></button>
+            <div>
+              <div class="tb-title">Select Meals</div>
+              <div class="tb-sub">For Tomorrow</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="progress-bar">
+          <div class="step active" id="st-b">
+            <div class="step-dot">1</div>
+            <div class="step-lbl">Breakfast</div>
+          </div>
+          <div class="step" id="st-l">
+            <div class="step-dot">2</div>
+            <div class="step-lbl">Lunch</div>
+          </div>
+          <div class="step" id="st-d">
+            <div class="step-dot">3</div>
+            <div class="step-lbl">Dinner</div>
+          </div>
+          <div class="step" id="st-r">
+            <div class="step-dot">4</div>
+            <div class="step-lbl">Review</div>
+          </div>
+        </div>
+
+        <!-- STEP 1: Breakfast -->
+        <div class="step-body" id="wb-breakfast">
+          <div class="sec-title" style="margin-bottom:10px;">🍳 Breakfast</div>
+          <div class="meal-note">
+            <i class="fa fa-clock"></i> Mess: <strong>7:30 AM – 8:30 AM</strong> &nbsp;|&nbsp;
+            Cancel by: <strong>7:00 AM</strong>
+          </div>
+          <div class="opt-list" id="bfast-opts"></div>
+          <div id="bfast-err" class="err-box" style="margin-top:10px;"></div>
+          <button class="btn btn-primary" style="margin-top:16px;" onclick="stepToLunch()">
+            Next: Lunch <i class="fa fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <!-- STEP 2: Lunch -->
+        <div class="step-body" id="wb-lunch" style="display:none;">
+          <div class="sec-title" style="margin-bottom:10px;">🍛 Lunch</div>
+          <div class="meal-note">
+            <i class="fa fa-clock"></i> Mess: <strong>11:30 AM – 2:00 PM</strong> &nbsp;|&nbsp;
+            Cancel by: <strong>11:00 AM</strong>
+          </div>
+          <div class="opt-list" id="lunch-opts"></div>
+          <div id="lunch-err" class="err-box" style="margin-top:10px;"></div>
+          <div class="btn-group" style="margin-top:16px;">
+            <button class="btn btn-outline" onclick="setWizStep('breakfast')"><i class="fa fa-arrow-left"></i>
+              Back</button>
+            <button class="btn btn-primary" onclick="stepToDinner()">Next: Dinner <i
+                class="fa fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Dinner -->
+        <div class="step-body" id="wb-dinner" style="display:none;">
+          <div class="sec-title" style="margin-bottom:10px;">🍽️ Dinner</div>
+          <div class="meal-note">
+            <i class="fa fa-clock"></i> Mess: <strong>7:00 PM – 9:30 PM</strong> &nbsp;|&nbsp;
+            Cancel by: <strong>6:30 PM</strong>
+          </div>
+          <div class="opt-list" id="dinner-opts"></div>
+          <div id="dinner-err" class="err-box" style="margin-top:10px;"></div>
+          <div class="btn-group" style="margin-top:16px;">
+            <button class="btn btn-outline" onclick="setWizStep('lunch')"><i class="fa fa-arrow-left"></i> Back</button>
+            <button class="btn btn-primary" onclick="stepToReview()">Review <i class="fa fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- STEP 4: Review -->
+        <div class="step-body" id="wb-review" style="display:none;">
+          <div class="sec-title" style="margin-bottom:14px;">📋 Final Review</div>
+
+          <div class="review-box">
+            <div class="review-head">🧾 Your meal plan for tomorrow</div>
+            <div class="review-row"><span class="rl">👤 Register No.</span><span class="rv" id="rv-reg">—</span></div>
+            <div class="review-row"><span class="rl">🍳 Breakfast</span><span class="rv" id="rv-b">—</span></div>
+            <div class="review-row"><span class="rl">🍛 Lunch</span><span class="rv" id="rv-l">—</span></div>
+            <div class="review-row" style="border:none;"><span class="rl">🍽️ Dinner</span><span class="rv"
+                id="rv-d">—</span></div>
+          </div>
+
+          <div class="banner ban-info">
+            <i class="fa fa-info-circle"></i>
+            <span>You can cancel individual meals before deadlines after submitting.</span>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-outline" onclick="setWizStep('dinner')"><i class="fa fa-arrow-left"></i>
+              Edit</button>
+            <button class="btn btn-success" onclick="submitMeals()"><i class="fa fa-check"></i> Confirm &amp;
+              Submit</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /sc-select -->
+
+    <!-- ==============================================================
+       SCREEN: QR CODE
+       ============================================================== -->
+    <div class="screen" id="sc-qr">
+      <div class="card">
+        <div class="top-bar">
+          <div class="tb-left">
+            <div>
+              <div class="tb-title">Meal Entry QR</div>
+              <div class="tb-sub">Show at mess gate</div>
+            </div>
+          </div>
+        </div>
+        <div class="qr-wrap">
+          <div class="qr-badge">✅</div>
+          <div class="qr-title">Meals Confirmed!</div>
+          <div class="qr-sub">Your selections are saved for tomorrow.</div>
+          <div class="qr-frame"><img id="qr-img" width="200" alt="Meal Entry QR Code"></div>
+          <div class="id-card">
+            <div class="id-label">Student ID</div>
+            <div class="id-val" id="qr-id"></div>
+          </div>
+          <p style="color:var(--t3);font-size:12px;margin-bottom:20px;">📱 Show this QR at the mess entry gate</p>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="show('sc-feedback')"><i class="fa fa-comment-dots"></i> Give
+              Feedback</button>
+            <button class="btn btn-outline" onclick="openDash()">Dashboard</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /sc-qr -->
+
+    <!-- ==============================================================
+       SCREEN: FEEDBACK (Optional)
+       ============================================================== -->
+    <div class="screen" id="sc-feedback">
+      <div class="card">
+        <div class="top-bar">
+          <div class="tb-left">
+            <button class="back-btn" onclick="openDash()"><i class="fa fa-chevron-left"></i></button>
+            <div>
+              <div class="tb-title">Feedback</div>
+              <div class="tb-sub">Optional — help us improve</div>
+            </div>
+          </div>
+        </div>
+        <div class="page-body">
+          <div class="banner ban-success"><i class="fa fa-heart"></i><span>Feedback is <strong>completely
+                optional</strong>. You can skip anytime!</span></div>
+
+          <div class="sec-title" style="margin-bottom:12px;">🍳 Breakfast Feedback</div>
+          <div class="rating-row" id="fb-row-breakfast">
+            <div class="rating-btn" onclick="pickRating('breakfast',1,this)"><span class="em">😞</span><span
+                class="lbl">Terrible</span></div>
+            <div class="rating-btn" onclick="pickRating('breakfast',2,this)"><span class="em">😐</span><span
+                class="lbl">Bad</span></div>
+            <div class="rating-btn" onclick="pickRating('breakfast',3,this)"><span class="em">🙂</span><span
+                class="lbl">OK</span></div>
+            <div class="rating-btn" onclick="pickRating('breakfast',4,this)"><span class="em">😊</span><span
+                class="lbl">Good</span></div>
+            <div class="rating-btn" onclick="pickRating('breakfast',5,this)"><span class="em">🤩</span><span
+                class="lbl">Excellent</span></div>
+          </div>
+
+          <div class="sec-title" style="margin-bottom:12px;">🍛 Lunch Feedback</div>
+          <div class="rating-row" id="fb-row-lunch">
+            <div class="rating-btn" onclick="pickRating('lunch',1,this)"><span class="em">😞</span><span
+                class="lbl">Terrible</span></div>
+            <div class="rating-btn" onclick="pickRating('lunch',2,this)"><span class="em">😐</span><span
+                class="lbl">Bad</span></div>
+            <div class="rating-btn" onclick="pickRating('lunch',3,this)"><span class="em">🙂</span><span
+                class="lbl">OK</span></div>
+            <div class="rating-btn" onclick="pickRating('lunch',4,this)"><span class="em">😊</span><span
+                class="lbl">Good</span></div>
+            <div class="rating-btn" onclick="pickRating('lunch',5,this)"><span class="em">🤩</span><span
+                class="lbl">Excellent</span></div>
+          </div>
+
+          <div class="sec-title" style="margin-bottom:12px;">🍽️ Dinner Feedback</div>
+          <div class="rating-row" id="fb-row-dinner" style="margin-bottom:20px;">
+            <div class="rating-btn" onclick="pickRating('dinner',1,this)"><span class="em">😞</span><span
+                class="lbl">Terrible</span></div>
+            <div class="rating-btn" onclick="pickRating('dinner',2,this)"><span class="em">😐</span><span
+                class="lbl">Bad</span></div>
+            <div class="rating-btn" onclick="pickRating('dinner',3,this)"><span class="em">🙂</span><span
+                class="lbl">OK</span></div>
+            <div class="rating-btn" onclick="pickRating('dinner',4,this)"><span class="em">😊</span><span
+                class="lbl">Good</span></div>
+            <div class="rating-btn" onclick="pickRating('dinner',5,this)"><span class="em">🤩</span><span
+                class="lbl">Excellent</span></div>
+          </div>
+
+          <div class="sec-title" style="margin-bottom:10px;">Any suggestions?</div>
+          <textarea class="fb-area" id="fb-text" maxlength="300"
+            placeholder="Tell us what you liked or what could be improved... (optional)"
+            oninput="document.getElementById('cc').textContent=this.value.length"></textarea>
+          <div class="char-count"><span id="cc">0</span>/300</div>
+
+          <div class="btn-group" style="margin-top:18px;">
+            <button class="btn btn-outline" onclick="skipFeedback()">Skip <i class="fa fa-forward"></i></button>
+            <button class="btn btn-primary" onclick="submitFeedback()">Submit <i class="fa fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+    </div><!-- /sc-feedback -->
+
+    <div class="app-footer">© 2026 SRM Hostel · Food Waste Management System v2.1</div>
+  </div><!-- /app-wrap -->
+
+  <script src="db.js"></script>
+  <script>
+    /* ================================================================
+       FWMS — STUDENT PORTAL APPLICATION LOGIC v2.1
+       ================================================================ */
+
+    /* ---- STATE ---- */
+    let currentUser = null;
+    let mealPicks = { breakfast: [], lunch: [], dinner: [] };  // [{name, qty}]
+    let qtyState = { breakfast: {}, lunch: {}, dinner: {} };   // {itemName: qty}
+    let fbRatings = { breakfast: 0, lunch: 0, dinner: 0 };
+
+    /* ---- Items that support quantity selection ---- */
+    const QTY_CFG = {
+      'Dosa': { max: 5, unit: 'pcs' },
+      'Idly': { max: 8, unit: 'pcs' },
+      'Chapathi': { max: 6, unit: 'pcs' },
+      'Roti': { max: 6, unit: 'pcs' },
+    };
+
+    /* ---- Cancellation deadlines ---- */
+    const DEADLINES = {
+      breakfast: { h: 7, m: 0 },
+      lunch: { h: 11, m: 0 },
+      dinner: { h: 18, m: 30 }
+    };
+    const TIMINGS = { breakfast: '7:30 AM – 8:30 AM', lunch: '11:30 AM – 2:00 PM', dinner: '7:00 PM – 9:30 PM' };
+    const LABELS = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner' };
+    const EMOJIS = { breakfast: '🍳', lunch: '🍛', dinner: '🍽️' };
+
+    const FOOD_EMOJI = {
+      'Dosa': '🥞', 'Idly': '🍘', 'Poha': '🍚', 'Upma': '🍲',
+      'Rice': '🍚', 'Dal': '🥣', 'Sambar': '🍲', 'Chutney': '🍛',
+      'Curd': '🥛', 'Roti': '🫓', 'Chapathi': '🫓', 'Fried Rice': '🍜',
+      'Paneer': '🧀', 'Rajma': '🫘', 'Noodles': '🍜'
+    };
+    const fe = name => FOOD_EMOJI[name] || '🥘';
+
+    /* ---- Init ---- */
+    document.addEventListener('DOMContentLoaded', () => {
+      DB.init();
+      const u = DB.getCurrentUser();
+      if (u) { currentUser = u; openDash(); }
+    });
+
+    /* ================================================================
+       UTILITIES
+       ================================================================ */
+    function show(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function toast(msg, type = 'ts') {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = `show ${type}`;
+      setTimeout(() => t.className = '', 3200);
+    }
+
+    function showErr(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg; el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 4000);
+    }
+
+    function fmtDate(d) {
+      return d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    function todayKey() { return new Date().toISOString().split('T')[0]; }
+    function tmrwKey() { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().split('T')[0]; }
+
+    function cancellationOpen(meal) {
+      const now = new Date(), dl = DEADLINES[meal];
+      const cut = new Date(); cut.setHours(dl.h, dl.m, 0, 0);
+      return now < cut;
+    }
+    function deadlineLabel(meal) {
+      const { h, m } = DEADLINES[meal];
+      const hr = h > 12 ? h - 12 : h, ap = h >= 12 ? 'PM' : 'AM';
+      return `${hr}:${String(m).padStart(2, '0')} ${ap}`;
+    }
+
+    /* Format [{name,qty}] → human string "Dosa × 3, Idly × 2" */
+    function formatItems(items) {
+      if (!items || !items.length) return '—';
+      return items.map(i => {
+        const q = i.qty || 1;
+        return `${fe(i.name)} ${i.name}${q > 1 ? ' × ' + q : ''}`;
+      }).join(', ');
+    }
+
+    function togglePwd(inputId, iconId) {
+      const inp = document.getElementById(inputId), ic = document.getElementById(iconId);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      ic.className = (inp.type === 'password' ? 'fa fa-eye' : 'fa fa-eye-slash') + ' input-toggle';
+    }
+
+    /* ================================================================
+       AUTH — LOGIN / REGISTER / LOGOUT
+       ================================================================ */
+    function doLogin() {
+      const reg = document.getElementById('inp-reg').value.trim();
+      const pwd = document.getElementById('inp-pwd').value;
+      if (!reg) { showErr('login-err', '⚠ Please enter your Register Number'); return; }
+      if (!pwd) { showErr('login-err', '⚠ Please enter your Password'); return; }
+
+      const btn = document.getElementById('login-btn');
+      btn.innerHTML = '<span class="spin"></span> Logging in...'; btn.disabled = true;
+
+      setTimeout(() => {
+        const student = DB.loginStudent(reg, pwd);
+        if (student) {
+          currentUser = student;
+          toast('Welcome back, ' + student.name.split(' ')[0] + '! 🎉');
+          openDash();
+        } else {
+          showErr('login-err', '❌ Invalid Register Number or Password');
+          btn.innerHTML = '<i class="fa fa-sign-in-alt"></i> Login to Portal';
+          btn.disabled = false;
+        }
+      }, 800);
+    }
+
+    function doRegister() {
+      const btn = document.getElementById('reg-btn');
+      const name = document.getElementById('r-name').value.trim();
+      const regNo = document.getElementById('r-regno').value.trim();
+      const cls = document.getElementById('r-class').value;
+      const branch = document.getElementById('r-branch').value;
+      const room = document.getElementById('r-room').value.trim();
+      const pwd = document.getElementById('r-pwd').value;
+      const cpwd = document.getElementById('r-cpwd').value;
+
+      /* Validation */
+      if (!name || !regNo || !cls || !branch || !pwd || !cpwd) {
+        showErr('reg-err', '⚠ All required fields must be filled'); return;
+      }
+      if (pwd !== cpwd) {
+        showErr('reg-err', '❌ Passwords do not match'); return;
+      }
+
+      btn.innerHTML = '<span class="spin"></span> Registering...'; btn.disabled = true;
+
+      setTimeout(() => {
+        const result = DB.registerStudent({ regNo, name, studentClass: cls, branch, room, password: pwd });
+        if (result === true) {
+          /* Show success & clear form */
+          document.getElementById('reg-success').style.display = 'flex';
+          document.getElementById('reg-err').classList.remove('show');
+          ['r-name', 'r-regno', 'r-room', 'r-pwd', 'r-cpwd'].forEach(id => document.getElementById(id).value = '');
+          document.getElementById('r-class').value = '';
+          document.getElementById('r-branch').value = '';
+
+          toast('Account created! Please log in.', 'ts');
+          setTimeout(() => {
+            document.getElementById('reg-success').style.display = 'none';
+            show('sc-login');
+            /* Pre-fill the login regNo */
+            document.getElementById('inp-reg').value = regNo;
+          }, 2200);
+        } else {
+          showErr('reg-err', '❌ ' + result);
+        }
+        btn.innerHTML = '<i class="fa fa-user-plus"></i> Create Account';
+        btn.disabled = false;
+      }, 900);
+    }
+
+    function doLogout() {
+      DB.logoutStudent(); currentUser = null;
+      document.getElementById('inp-reg').value = '';
+      document.getElementById('inp-pwd').value = '';
+      show('sc-login');
+      toast('Logged out successfully');
+    }
+
+    /* ================================================================
+       DASHBOARD
+       ================================================================ */
+    function openDash() {
+      const now = new Date();
+      document.getElementById('db-name').textContent = currentUser.name.split(' ')[0];
+      document.getElementById('db-regno').textContent = currentUser.regNo;
+      document.getElementById('db-class').textContent = currentUser.class || '—';
+      document.getElementById('db-branch').textContent = currentUser.branch || '—';
+      document.getElementById('db-today').textContent = fmtDate(now);
+      document.getElementById('db-date').textContent = fmtDate(now);
+      renderTodayMeals();
+      renderTmrStatus();
+      show('sc-dashboard');
+    }
+
+    function renderTodayMeals() {
+      const sub = DB.getSubmission(todayKey(), currentUser.regNo);
+      const box = document.getElementById('today-meals');
+
+      if (!sub) {
+        box.innerHTML = `<div class="banner ban-info"><i class="fa fa-info-circle"></i>
+        <span>No meal record for today. Use the button below to select tomorrow's meals.</span></div>`;
+        return;
+      }
+
+      box.innerHTML = ['breakfast', 'lunch', 'dinner'].map(m => {
+        const md = sub[m];
+        const open = cancellationOpen(m);
+        const dl = deadlineLabel(m);
+        let chip, content, action;
+
+        if (!md || !md.selected) {
+          chip = '<span class="status-chip chip-none">Not Selected</span>';
+          content = '<span style="color:var(--t4);font-size:13px;">No selection for this slot</span>';
+          action = '';
+        } else if (md.cancelled) {
+          const ct = new Date(md.cancelledAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+          chip = '<span class="status-chip chip-cancel">❌ Cancelled</span>';
+          content = `<span style="color:var(--t4);font-size:12px;">Cancelled at ${ct}</span>`;
+          action = open
+            ? `<button class="btn btn-success btn-xs" onclick="restoreMeal('${m}')"><i class="fa fa-undo"></i> Restore</button>`
+            : '';
+        } else {
+          chip = '<span class="status-chip chip-active">✅ Active</span>';
+          const tags = (md.items || []).map(i => `
+          <span class="item-tag">${fe(i.name)} ${i.name}
+            ${(i.qty || 1) > 1 ? `<span class="qty-badge">×${i.qty}</span>` : ''}
+          </span>`).join('');
+          content = tags || '—';
+          action = open
+            ? `<button class="btn btn-danger btn-xs" onclick="cancelMeal('${m}')"><i class="fa fa-ban"></i> Cancel ${LABELS[m]}</button>`
+            : `<span class="dl-row dl-past"><i class="fa fa-times-circle"></i> Deadline passed (was ${dl})</span>`;
+        }
+
+        return `<div class="meal-card">
+        <div class="mc-head">
+          <div class="mc-left">
+            <span class="mc-icon">${EMOJIS[m]}</span>
+            <div>
+              <div class="mc-name">${LABELS[m]}</div>
+              <div class="mc-time">${TIMINGS[m]}</div>
+            </div>
+          </div>${chip}
+        </div>
+        <div class="mc-body">
+          <div class="items-list">${content}</div>
+          <div class="dl-row ${open ? 'dl-safe' : 'dl-past'}">
+            <strong style="padding:2px 6px; border-radius:4px; font-size:10px; text-transform:uppercase; background:${open ? 'var(--green-bg)' : 'var(--red-bg)'}; color:${open ? 'var(--green)' : 'var(--red)'};">Status: ${open ? 'Open' : 'Closed'}</strong>
+            <span><i class="fa fa-${open ? 'check-circle' : 'times-circle'}"></i>
+            ${open ? `Cancellation open until <strong>${dl}</strong>` : `Cancellation deadline passed (${dl})`}</span>
+          </div>
+          <div class="mc-actions">${action}</div>
+        </div>
+      </div>`;
+      }).join('');
+    }
+
+    function cancelMeal(meal) {
+      if (!cancellationOpen(meal)) { toast(`❌ ${LABELS[meal]} cancellation deadline passed!`, 'te'); return; }
+      if (confirm(`Cancel your ${LABELS[meal]}? This helps reduce food waste.`)) {
+        DB.cancelMeal(todayKey(), currentUser.regNo, meal);
+        toast(`✅ ${LABELS[meal]} cancelled. Thank you!`, 'ts');
+        renderTodayMeals();
+      }
+    }
+
+    function restoreMeal(meal) {
+      if (!cancellationOpen(meal)) { toast('❌ Deadline passed. Cannot restore.', 'te'); return; }
+      DB.uncancelMeal(todayKey(), currentUser.regNo, meal);
+      toast(`✅ ${LABELS[meal]} restored!`, 'ts');
+      renderTodayMeals();
+    }
+
+    function renderTmrStatus() {
+      const sub = DB.getSubmission(tmrwKey(), currentUser.regNo);
+      const el = document.getElementById('tmr-status');
+      const btn = document.getElementById('sel-btn');
+      const d = new Date(); d.setDate(d.getDate() + 1);
+
+      if (sub) {
+        el.innerHTML = `<div class="action-card">
+        <div class="banner ban-success" style="margin-bottom:0;">
+          <i class="fa fa-check-circle"></i>
+          <div>Meals selected for <strong>${fmtDate(d)}</strong>. You can update them.</div>
+        </div></div>`;
+        btn.innerHTML = '<i class="fa fa-edit"></i> Update Tomorrow\'s Meals';
+      } else {
+        el.innerHTML = `<div class="action-card">
+        <div class="banner ban-warn" style="margin-bottom:0;">
+          <i class="fa fa-exclamation-triangle"></i>
+          <div>No meal selected for tomorrow. Select before <strong>3:00 PM</strong> today.</div>
+        </div></div>`;
+        btn.innerHTML = '<i class="fa fa-utensils"></i> Select Tomorrow\'s Meals';
+      }
+    }
+
+    /* ================================================================
+       MEAL SELECTION WIZARD
+       ================================================================ */
+    function startMealWizard() {
+      const menu = DB.getMenu(tmrwKey());
+      /* Reset all quantities */
+      qtyState = { breakfast: {}, lunch: {}, dinner: {} };
+      mealPicks = { breakfast: [], lunch: [], dinner: [] };
+
+      buildMealOpts('bfast-opts', 'breakfast', menu.breakfast, 'checkbox');
+      buildMealOpts('lunch-opts', 'lunch', menu.lunch, 'checkbox');
+      buildMealOpts('dinner-opts', 'dinner', menu.dinner, 'radio');
+
+      setWizStep('breakfast');
+      show('sc-select');
+    }
+
+    /**
+     * Render meal options — qty stepper for countable items, checkbox/radio for others.
+     */
+    function buildMealOpts(containerId, meal, items, inputType) {
+      const box = document.getElementById(containerId);
+      box.innerHTML = items.map(item => {
+        const q = QTY_CFG[item];
+        if (q) {
+          /* Quantity stepper */
+          const uid = `qty-${meal}-${item.replace(/\s/g, '_')}`;
+          return `
+          <div class="qty-opt" id="qopt-${meal}-${item.replace(/\s/g, '_')}">
+            <span class="opt-emoji">${fe(item)}</span>
+            <div class="qty-info">
+              <div class="qty-item-name">${item}</div>
+              <div class="qty-unit">${q.unit} · max ${q.max}</div>
+            </div>
+            <div class="stepper">
+              <button class="st-btn" id="minus-${meal}-${item.replace(/\s/g, '_')}"
+                onclick="adjQty('${meal}','${item}',-1)" disabled>−</button>
+              <span class="st-val" id="${uid}">0</span>
+              <button class="st-btn" id="plus-${meal}-${item.replace(/\s/g, '_')}"
+                onclick="adjQty('${meal}','${item}',+1)">+</button>
+            </div>
+          </div>`;
+        } else {
+          /* Standard checkbox / radio */
+          const cbId = `cb-${meal}-${item.replace(/\s/g, '_')}`;
+          return `
+          <label class="meal-opt" for="${cbId}">
+            <input type="${inputType}" ${inputType === 'radio' ? 'name="dinner-r"' : ''}
+              id="${cbId}" value="${item}" onchange="onOptChange(this,'${meal}')">
+            <span class="opt-emoji">${fe(item)}</span>
+            <span class="opt-name">${item}</span>
+          </label>`;
+        }
+      }).join('');
+    }
+
+    function onOptChange(inp, meal) {
+      const lbl = inp.closest('.meal-opt');
+      if (inp.type === 'radio') {
+        document.querySelectorAll(`#${meal === 'dinner' ? 'dinner' : meal}-opts .meal-opt`)
+          .forEach(l => l.classList.remove('sel'));
+      }
+      lbl.classList.toggle('sel', inp.checked);
+    }
+
+    function adjQty(meal, item, delta) {
+      const cfg = QTY_CFG[item];
+      const cur = qtyState[meal][item] || 0;
+      const nxt = Math.max(0, Math.min(cfg.max, cur + delta));
+      qtyState[meal][item] = nxt;
+
+      const uid = `qty-${meal}-${item.replace(/\s/g, '_')}`;
+      const oId = `qopt-${meal}-${item.replace(/\s/g, '_')}`;
+      const mId = `minus-${meal}-${item.replace(/\s/g, '_')}`;
+      const pId = `plus-${meal}-${item.replace(/\s/g, '_')}`;
+
+      document.getElementById(uid).textContent = nxt;
+      document.getElementById(oId).classList.toggle('sel', nxt > 0);
+      document.getElementById(mId).disabled = (nxt === 0);
+      document.getElementById(pId).disabled = (nxt === cfg.max);
+    }
+
+    /** Collect items from a meal step (mix of qty + checkbox) */
+    function collectMealItems(meal, containerId) {
+      const items = [];
+      /* Qty items */
+      Object.entries(qtyState[meal] || {}).forEach(([name, qty]) => {
+        if (qty > 0) items.push({ name, qty });
+      });
+      /* Checkbox/radio items */
+      document.querySelectorAll(`#${containerId} input:checked`).forEach(inp => {
+        if (!QTY_CFG[inp.value]) items.push({ name: inp.value, qty: 1 });
+      });
+      return items;
+    }
+
+    /* ---- Wizard step management ---- */
+    const STEP_ORDER = ['breakfast', 'lunch', 'dinner', 'review'];
+    const STEP_BODIES = { breakfast: 'wb-breakfast', lunch: 'wb-lunch', dinner: 'wb-dinner', review: 'wb-review' };
+    const STEP_DOTS = { breakfast: 'st-b', lunch: 'st-l', dinner: 'st-d', review: 'st-r' };
+
+    function setWizStep(target) {
+      STEP_ORDER.forEach(s => {
+        document.getElementById(STEP_BODIES[s]).style.display = 'none';
+        const si = STEP_ORDER.indexOf(s), ti = STEP_ORDER.indexOf(target);
+        const el = document.getElementById(STEP_DOTS[s]);
+        el.className = 'step' + (si < ti ? ' done' : si === ti ? ' active' : '');
+      });
+      document.getElementById(STEP_BODIES[target]).style.display = 'block';
+    }
+
+    function stepToLunch() {
+      const items = collectMealItems('breakfast', 'bfast-opts');
+      if (!items.length) { showErr('bfast-err', '⚠ Please select or add at least one breakfast item'); return; }
+      mealPicks.breakfast = items;
+      setWizStep('lunch');
+    }
+
+    function stepToDinner() {
+      const items = collectMealItems('lunch', 'lunch-opts');
+      if (!items.length) { showErr('lunch-err', '⚠ Please select at least one lunch item'); return; }
+      mealPicks.lunch = items;
+      setWizStep('dinner');
+    }
+
+    function stepToReview() {
+      const items = collectMealItems('dinner', 'dinner-opts');
+      if (!items.length) { showErr('dinner-err', '⚠ Please select a dinner option'); return; }
+      mealPicks.dinner = items;
+
+      document.getElementById('rv-reg').textContent = currentUser.regNo;
+      document.getElementById('rv-b').textContent = formatItems(mealPicks.breakfast);
+      document.getElementById('rv-l').textContent = formatItems(mealPicks.lunch);
+      document.getElementById('rv-d').textContent = formatItems(mealPicks.dinner);
+      setWizStep('review');
+    }
+
+    function submitMeals() {
+      const key = tmrwKey();
+      DB.saveSubmission(key, currentUser.regNo, {
+        regNo: currentUser.regNo,
+        name: currentUser.name,
+        class: currentUser.class || '',
+        branch: currentUser.branch || '',
+        breakfast: { selected: true, items: mealPicks.breakfast, cancelled: false, cancelledAt: null },
+        lunch: { selected: true, items: mealPicks.lunch, cancelled: false, cancelledAt: null },
+        dinner: { selected: true, items: mealPicks.dinner, cancelled: false, cancelledAt: null },
+        submittedAt: new Date().toISOString()
+      });
+
+      const qrData = `FWMS|${currentUser.regNo}|${key}`;
+      document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}`;
+      document.getElementById('qr-id').textContent = currentUser.regNo;
+      toast('🎉 Meals confirmed for tomorrow!', 'ts');
+      show('sc-qr');
+    }
+
+    /* ================================================================
+       FEEDBACK
+       ================================================================ */
+    function pickRating(meal, r, el) {
+      fbRatings[meal] = r;
+      const parent = el.closest('.rating-row');
+      parent.querySelectorAll('.rating-btn').forEach(e => e.classList.remove('sel'));
+      el.classList.add('sel');
+    }
+
+    function submitFeedback() {
+      const comment = document.getElementById('fb-text').value.trim();
+      const dateStr = todayKey();
+
+      let submitted = false;
+      if (fbRatings.breakfast > 0) { DB.saveMealFeedback(currentUser.regNo, dateStr, 'breakfast', fbRatings.breakfast, comment); submitted = true; }
+      if (fbRatings.lunch > 0) { DB.saveMealFeedback(currentUser.regNo, dateStr, 'lunch', fbRatings.lunch, comment); submitted = true; }
+      if (fbRatings.dinner > 0) { DB.saveMealFeedback(currentUser.regNo, dateStr, 'dinner', fbRatings.dinner, comment); submitted = true; }
+
+      if (!submitted && comment) {
+        DB.saveFeedback(currentUser.regNo, { rating: 0, comment, date: dateStr });
+        submitted = true;
+      }
+
+      if (submitted) {
+        toast('💙 Thank you for your feedback!', 'ts');
+      } else {
+        toast('Feedback skipped.', 'tw');
+      }
+      openDash();
+    }
+
+    function skipFeedback() {
+      toast('Feedback skipped. See you next time!', 'tw');
+      openDash();
+    }
+  </script>
+</body>
+
+</html>
