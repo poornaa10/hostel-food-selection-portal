@@ -38,3 +38,29 @@ Follow these instructions to get a copy of the project up and running on your lo
 1. Clone the repository:
    ```bash
    git clone [https://github.com/poornaa10/hostel-food-selection-portal.git](https://github.com/poornaa10/hostel-food-selection-portal.git)
+Navigate into the project directory:
+
+Bash
+cd hostel-food-selection-portal
+Install dependencies:
+
+Bash
+npm install
+Set up environment variables:
+
+Create a .env file in the root directory.
+
+Add your database URI, secret keys, and port numbers (see .env.example if available).
+
+Start the development server:
+
+Bash
+npm start
+🤝 Contributing
+Contributions, issues, and feature requests are welcome!
+Feel free to check the issues page.
+
+📝 License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+
